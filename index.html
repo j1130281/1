@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圖片色系轉換器</title>
+    <style>
+/* 🥛 背景與通透外框 */
+body { 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+    background-color: #FAF8F5; /* 湯花白瓷色，極乾淨、帶微暖的白 */
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    padding: 20px; 
+    color: #8C7355; /* 淺礦石灰褐，足夠清晰但絕不沉重 */
+}
+.container { 
+    background-color: #FFFFFF; /* 純白色 */
+    padding: 25px; 
+    border-radius: 16px; 
+    box-shadow: 0 8px 24px #ECE2D0; /* 極淡蜜糖灰，非常輕柔的空氣感 */
+    width: 100%; 
+    max-width: 500px; 
+    position: relative; 
+    transition: box-shadow 0.3s;
+}
+.container:hover {
+    box-shadow: 0 12px 32px #D6C7AF; /* 透亮礦物光，優雅浮起 */
+}
+
+/* 💛 清透文字與文字陰影 */
+h2 { 
+    text-align: center; 
+    margin-top: 5px; 
+    color: #684E23; /* 溫潤蜜漬褐，柔和的高雅褐色 */
+    font-size: 1.5rem; 
+    text-shadow: 1px 1px 2px #FFF3DB; /* 透亮蜜糖光微陰影 */
+}
+
+/* 🔄 右上角功能切換紐 */
+.mode-toggle-container {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #8C7355;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #F7F1E5; /* 清湯白泥色 */
+    transition: .3s;
+    border-radius: 24px;
+    border: 1px solid #F0E5D3; /* 清透蜜沙色 */
+}
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 16px; width: 16px;
+    left: 3px; bottom: 3px;
+    background-color: #D09B4E; /* 蜂蜜結晶核心 */
+    transition: .3s;
+    border-radius: 50%;
+}
+input:checked + .toggle-slider {
+    background-color: #E9B974; /* 透光蜜汁色 */
+}
+input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+    background-color: #FFFFFF;
+}
+.mode-label {
+    user-select: none;
+    color: #8C7355;
+}
+
+/* 🔘 按鈕與控制項 */
+/* 🔘 亮麗按鈕與滑桿控制項 (變身甜美透亮漸層) */
+.btn-group { 
+    display: flex; 
+    gap: 12px; 
+    margin-bottom: 20px; 
+    margin-top: 15px; 
+}
+.btn { 
+    flex: 1; 
+    padding: 12px; 
+    border-radius: 8px; 
+    font-size: 14px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    text-align: center; 
+    border: none; 
+    color: #FFFFFF; /* 純白色，在蜂蜜金背景上顯得乾淨俐落 */
+    background-size: 200% auto; /* 為了讓懸停時的漸層流動更柔和 */
+    transition: all 0.3s ease, box-shadow 0.1s; 
+}
+
+/* 🥛 背景與通透外框 */
+body { 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+    background-color: #FAF8F5; /* 湯花白瓷色，極乾淨、帶微暖的白 */
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    padding: 20px; 
+    color: #8C7355; /* 淺礦石灰褐 */
+}
+.container { 
+    background-color: #FFFFFF; /* 純白色 */
+    padding: 25px; 
+    border-radius: 16px; 
+    box-shadow: 0 8px 24px #ECE2D0; /* 極淡蜜糖灰，非常輕柔的空氣感陰影 */
+    width: 100%; 
+    max-width: 500px; 
+    position: relative; 
+    transition: box-shadow 0.3s;
+}
+.container:hover {
+    box-shadow: 0 12px 32px #D6C7AF; /* 透亮礦物光 */
+}
+
+/* ✍️ 清透文字與文字陰影 */
+h2 { 
+    text-align: center; 
+    margin-top: 5px; 
+    color: #684E23; /* 溫潤蜜漬褐 */
+    font-size: 1.5rem; 
+    text-shadow: 1px 1px 2px #FFF3DB; /* 透亮蜜糖光 */
+}
+
+/* 🔄 右上角功能切換紐 */
+.mode-toggle-container {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #8C7355;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #F7F1E5; /* 清湯白泥色 */
+    transition: .3s;
+    border-radius: 24px;
+    border: 1px solid #F0E5D3; /* 清透蜜沙色 */
+}
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 16px; width: 16px;
+    left: 3px; bottom: 3px;
+    background-color: #D09B4E; /* 蜂蜜結晶核心 */
+    transition: .3s;
+    border-radius: 50%;
+}
+input:checked + .toggle-slider {
+    background-color: #E9B974; /* 透光蜜汁色 */
+}
+input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+    background-color: #FFFFFF;
+}
+
+/* 🔘 亮麗按鈕與滑桿控制項 (變身甜美透亮漸層) */
+.btn-group { 
+    display: flex; 
+    gap: 12px; 
+    margin-bottom: 20px; 
+    margin-top: 15px; 
+}
+.btn { 
+    flex: 1; 
+    padding: 12px; 
+    border-radius: 8px; 
+    font-size: 14px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    text-align: center; 
+    border: none; 
+    color: #FFFFFF !important; 
+    transition: all 0.2s ease-in-out !important; 
+}
+
+/* 選擇圖片按鈕：澄澈蜂蜜金漸層 (★ 核心修復：強制加上定位框架防止隱形按鈕外洩) */
+.btn-upload { 
+    position: relative !important; /* 核心修復：把絕對定位的隱形按鈕關死在裡面 */
+    overflow: hidden !important;   /* 防止任何靈魂出竅 */
+    background: #F1C27B !important; 
+    background: -webkit-linear-gradient(to right, #F5D19A, #E3B065) !important; 
+    background: linear-gradient(to right, #F5D19A 0%, #E3B065 100%) !important; 
+    box-shadow: 0 4px 10px rgba(227, 176, 101, 0.25) !important;
+}
+.btn-upload:hover { 
+    background: linear-gradient(to right, #E3B065 0%, #D09B4E 100%) !important; 
+    box-shadow: 0 6px 14px rgba(227, 176, 101, 0.4) !important;
+}
+
+/* 關在按鈕內部的隱形真上傳鍵：嚴格貼齊老爸的肉身邊界 */
+.btn-upload input { 
+    position: absolute !important; 
+    top: 0 !important;
+    left: 0 !important; 
+    width: 100% !important; 
+    height: 100% !important; 
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important; 
+    cursor: pointer !important; 
+}
+
+/* 下載圖片按鈕：透光蜜汁色漸層 */
+.btn-download { 
+    background: #E9B974 !important; 
+    background: -webkit-linear-gradient(to right, #F0C98D, #D09B4E) !important;
+    background: linear-gradient(to right, #F0C98D 0%, #D09B4E 100%) !important;
+    box-shadow: 0 4px 10px rgba(233, 185, 116, 0.25) !important;
+}
+.btn-download:hover:not(:disabled) { 
+    background: linear-gradient(to right, #D09B4E 0%, #B58E53 100%) !important;
+    box-shadow: 0 6px 14px rgba(208, 155, 78, 0.4) !important;
+}
+
+/* 禁用狀態：轉換為清透的溫泉霧灰色，並拿掉漸層 */
+.btn-download:disabled { 
+    background: #C6BBAA !important; 
+    cursor: not-allowed !important; 
+    opacity: 0.5 !important; 
+    box-shadow: none !important;
+}
+
+/* 按鈕點擊時的空氣感縮小回饋 */
+.btn:active:not(:disabled) { 
+    transform: scale(0.98) !important; 
+    box-shadow: inset 0 2px 4px rgba(181, 142, 83, 0.4) !important; 
+}
+
+/* 滑桿控制面板 */
+.control-panel { display: flex; flex-direction: column; gap: 20px; margin: 20px 0; }
+.slider-group { display: flex; flex-direction: column; gap: 8px; }
+.slider-header { display: flex; align-items: center; font-size: 15px; font-weight: bold; width: 100%; color: #8C7355; }
+.slider-label { width: 75px; }
+
+/* 數字輸入框 */
+.number-input { width: 60px; padding: 4px 6px; border: 1px solid #F0E5D3; border-radius: 6px; font-size: 14px; text-align: center; color: #8C7355; background-color: #FFFFFF; }
+.number-input:focus { outline: none; border-color: #E4B363; box-shadow: 0 0 4px #FFF1D6; } 
+
+.color-preview-box { width: 22px; height: 22px; border-radius: 4px; border: 1px solid #F0E5D3; margin-left: auto; background-color: #F7F1E5; }
+
+/* 🎚️ 原生滑桿外觀去重感（保留 JavaScript 的原圖動態色彩 Bar） */
+input[type="range"] { 
+    -webkit-appearance: none; 
+    appearance: none; 
+    width: 100%; 
+    height: 12px; 
+    border-radius: 10px; 
+    outline: none; 
+    margin: 0; 
+    cursor: pointer; 
+    border: 1px solid #F0E5D3;
+}
+input[type="range"]::-webkit-slider-runnable-track { background: transparent; border: none; }
+input[type="range"]::-moz-range-track { background: transparent; border: none; }
+
+/* 滑桿圓點 (Thumb) - 蜂蜜結晶核心 */
+input[type="range"]::-webkit-slider-thumb { 
+    -webkit-appearance: none; 
+    appearance: none; 
+    width: 22px; 
+    height: 22px; 
+    border-radius: 50%; 
+    background: #D09B4E !important; 
+    border: 2px solid #FFFFFF; 
+    box-shadow: 0 1px 4px #D6C7AF; 
+    transition: transform 0.1s, box-shadow 0.1s; 
+    margin-top: -6px; 
+}
+input[type="range"]::-moz-range-thumb {
+    width: 22px; 
+    height: 22px; 
+    border-radius: 50%; 
+    background: #D09B4E !important; 
+    border: 2px solid #FFFFFF; 
+    box-shadow: 0 1px 4px #D6C7AF; 
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.1); box-shadow: 0 0 10px #FFF1D6; }
+input[type="range"]::-moz-range-thumb:hover { transform: scale(1.1); box-shadow: 0 0 10px #FFF1D6; }
+input[type="range"]:active::-webkit-slider-thumb { background: #B58E53 !important; } 
+input[type="range"]:active::-moz-range-thumb { background: #B58E53 !important; }
+
+/* 🫧 預覽與拖曳區域 */
+.preview-area { display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top: 20px; border: 2px dashed #F0E5D3; border-radius: 12px; min-height: 200px; background: #FAF8F5; overflow: hidden; transition: all 0.3s ease; position: relative; }
+.preview-area.dragover { border-color: #E4B363; background: #FFF1D6; }
+.drag-tip { color: #C6BBAA; font-size: 14px; pointer-events: none; text-align: center; padding: 20px; }
+canvas { max-width: 100%; max-height: 400px; display: none; object-fit: contain; border-radius: 4px; }
+
+
+/* 滑桿控制面板 */
+.control-panel { display: flex; flex-direction: column; gap: 20px; margin: 20px 0; }
+.slider-group { display: flex; flex-direction: column; gap: 8px; }
+.slider-header { display: flex; align-items: center; font-size: 15px; font-weight: bold; width: 100%; color: #8C7355; }
+.slider-label { width: 75px; }
+
+/* 數字輸入框 */
+.number-input { width: 60px; padding: 4px 6px; border: 1px solid #F0E5D3; border-radius: 6px; font-size: 14px; text-align: center; color: #8C7355; background-color: #FFFFFF; }
+.number-input:focus { outline: none; border-color: #E4B363; box-shadow: 0 0 4px #FFF1D6; } /* 明亮結晶金與微光發光 */
+
+.color-preview-box { width: 22px; height: 22px; border-radius: 4px; border: 1px solid #F0E5D3; margin-left: auto; background-color: #F7F1E5; }
+
+/* 🎚️ 原生滑桿外觀去重感調整（保留 JavaScript 的動態 Bar 功能，不寫死背景色） */
+input[type="range"] { 
+    -webkit-appearance: none; 
+    appearance: none; 
+    width: 100%; 
+    height: 12px; 
+    border-radius: 10px; 
+    outline: none; 
+    margin: 0; 
+    cursor: pointer; 
+    border: 1px solid #F0E5D3;
+}
+
+/* 瀏覽器專用軌道樣式解鎖 */
+input[type="range"]::-webkit-slider-runnable-track { background: transparent; border: none; }
+input[type="range"]::-moz-range-track { background: transparent; border: none; }
+
+/* 滑桿圓點 (Thumb) - 變身精緻、明亮小圓點 */
+input[type="range"]::-webkit-slider-thumb { 
+    -webkit-appearance: none; 
+    appearance: none; 
+    width: 22px; 
+    height: 22px; 
+    border-radius: 50%; 
+    background: #D09B4E !important; /* 蜂蜜結晶核心 */
+    border: 2px solid #FFFFFF; 
+    box-shadow: 0 1px 4px #D6C7AF; 
+    transition: transform 0.1s, box-shadow 0.1s; 
+    margin-top: -6px; /* 修正垂直置中置中 */
+}
+input[type="range"]::-moz-range-thumb {
+    width: 22px; 
+    height: 22px; 
+    border-radius: 50%; 
+    background: #D09B4E !important; 
+    border: 2px solid #FFFFFF; 
+    box-shadow: 0 1px 4px #D6C7AF; 
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+/* 滑桿圓點懸停與點擊時的「微光泡泡黃」外圈透亮發光 */
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.1); box-shadow: 0 0 10px #FFF1D6; }
+input[type="range"]::-moz-range-thumb:hover { transform: scale(1.1); box-shadow: 0 0 10px #FFF1D6; }
+input[type="range"]:active::-webkit-slider-thumb { background: #B58E53 !important; } /* 熟成蜜糖色 */
+input[type="range"]:active::-moz-range-thumb { background: #B58E53 !important; }
+
+/* 🫧 預覽與拖曳區域 */
+.preview-area { display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top: 20px; border: 2px dashed #F0E5D3; border-radius: 12px; min-height: 200px; background: #FAF8F5; overflow: hidden; transition: all 0.3s ease; position: relative; }
+.preview-area.dragover { border-color: #E4B363; background: #FFF1D6; }
+.drag-tip { color: #C6BBAA; font-size: 14px; pointer-events: none; text-align: center; padding: 20px; }
+canvas { max-width: 100%; max-height: 400px; display: none; object-fit: contain; border-radius: 4px; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 🔄 右上角功能切換紐 -->
+    <div class="mode-toggle-container">
+        <span class="mode-label" id="mode-text">色相全改</span>
+        <label class="switch">
+            <input type="checkbox" id="mode-switch">
+            <span class="toggle-slider"></span>
+        </label>
+    </div>
+
+    <h2>圖片色系轉換器</h2>
+    
+    <div class="btn-group">
+        <button class="btn btn-upload">選擇圖片<input type="file" id="upload" accept="image/*"></button>
+        <button class="btn btn-download" id="download" disabled>下載圖片</button>
+    </div>
+    
+    <div class="control-panel">
+        <!-- 顏色 (色相：0-512) -->
+        <div class="slider-group">
+            <div class="slider-header">
+                <span class="slider-label">顏色控制</span>
+                <input type="number" id="hue-val" class="number-input" min="0" max="512" value="0">
+                <div class="color-preview-box" id="color-preview"></div>
+            </div>
+            <input type="range" id="hue" min="0" max="512" value="0">
+        </div>
+        
+        <!-- 彩度 (飽和度偏移：0-512，預設 256 為原圖) -->
+        <div class="slider-group">
+            <div class="slider-header">
+                <span class="slider-label">彩度控制</span>
+                <input type="number" id="sat-val" class="number-input" min="0" max="512" value="256">
+            </div>
+            <input type="range" id="sat-slider" min="0" max="512" value="256">
+        </div>
+        
+        <!-- 亮度 (亮度偏移：0-512，預設 256 為原圖) -->
+        <div class="slider-group">
+            <div class="slider-header">
+                <span class="slider-label">亮度控制</span>
+                <input type="number" id="light-val" class="number-input" min="0" max="512" value="256">
+            </div>
+            <input type="range" id="light" min="0" max="512" value="256">
+        </div>
+
+        <!-- 反轉 (黑白反轉：0-512，預設 0 為原圖) -->
+        <div class="slider-group">
+            <div class="slider-header">
+                <span class="slider-label">黑白反轉</span>
+                <input type="number" id="invert-val" class="number-input" min="0" max="512" value="0">
+            </div>
+            <input type="range" id="invert" min="0" max="512" value="0">
+        </div>
+    </div>
+
+    <!-- 兼具拖曳功能的預覽區域 -->
+    <div class="preview-area" id="drop-zone">
+        <div class="drag-tip" id="drag-tip">點擊上方按鈕，或直接將圖片拖曳至此處</div>
+        <canvas id="canvas"></canvas>
+    </div>
+</div>
+
+<script>
+const upload = document.getElementById('upload'), download = document.getElementById('download');
+const canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d');
+const dropZone = document.getElementById('drop-zone'), dragTip = document.getElementById('drag-tip');
+const modeSwitch = document.getElementById('mode-switch'), modeText = document.getElementById('mode-text');
+
+const hueSlider = document.getElementById('hue'), satSlider = document.getElementById('sat-slider'), lightSlider = document.getElementById('light'), invertSlider = document.getElementById('invert');
+const hueVal = document.getElementById('hue-val'), satVal = document.getElementById('sat-val'), lightVal = document.getElementById('light-val'), invertVal = document.getElementById('invert-val');
+const previewBox = document.getElementById('color-preview');
+
+let originalImg = null;
+let isRendering = false;
+
+// 限制更新頻率的渲染包裝函式
+function scheduleRender() {
+    if (!isRendering) {
+        isRendering = true;
+        requestAnimationFrame(() => {
+            processImage();
+            isRendering = false;
+        });
+    }
+}
+
+// 監聽模式切換紐 (開關切換)
+modeSwitch.addEventListener('change', () => {
+    if (modeSwitch.checked) {
+        modeText.innerText = "原圖色偏";
+    } else {
+        modeText.innerText = "色相全改";
+    }
+    if (originalImg) {
+        generateHueTrackGradient();
+        updateSliderGradients();
+        scheduleRender();
+    }
+});
+
+// 處理圖片載入邏輯
+function loadImage(file) {
+    if (!file || !file.type.match('image.*')) return;
+    const reader = new FileReader();
+    reader.onload = event => {
+        originalImg = new Image();
+        originalImg.crossOrigin = "Anonymous";
+        originalImg.onload = () => {
+            const MAX_WIDTH = 2048, MAX_HEIGHT = 2048;
+
+            let width = originalImg.width, height = originalImg.height;
+            if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+                if (width > height) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                else { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            canvas.style.display = 'block';
+            dragTip.style.display = 'none';
+            download.disabled = false;
+            
+            // 初始化數值
+            hueSlider.value = 0; hueVal.value = 0;
+            satSlider.value = 256; satVal.value = 256;
+            lightSlider.value = 256; lightVal.value = 256;
+            invertSlider.value = 0; invertVal.value = 0;
+
+            generateHueTrackGradient();
+            updateSliderGradients();
+            processImage();
+        };
+        originalImg.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+// 檔案上傳與拖曳事件監聽
+upload.addEventListener('change', e => { if (e.target.files.length > 0) loadImage(e.target.files[0]); });
+
+['dragenter', 'dragover'].forEach(name => dropZone.addEventListener(name, e => { e.preventDefault(); dropZone.classList.add('dragover'); }, false));
+['dragleave', 'drop'].forEach(name => dropZone.addEventListener(name, e => { e.preventDefault(); dropZone.classList.remove('dragover'); }, false));
+dropZone.addEventListener('drop', e => { e.preventDefault(); const dt = e.dataTransfer; if (dt && dt.files.length > 0) loadImage(dt.files[0]); });
+
+// 設定滑桿與微調輸入框的雙向綁定
+function setupSync(slider, input) {
+    slider.addEventListener('input', () => {
+        input.value = slider.value;
+        updateSliderGradients();
+        scheduleRender();
+    });
+    input.addEventListener('change', () => {
+        let val = parseInt(input.value) || 0;
+        val = Math.max(0, Math.min(512, val));
+        input.value = val;
+        slider.value = val;
+        updateSliderGradients();
+        scheduleRender();
+    });
+}
+
+setupSync(hueSlider, hueVal);
+setupSync(satSlider, satVal);
+setupSync(lightSlider, lightVal);
+setupSync(invertSlider, invertVal);
+
+// 下載圖片
+download.addEventListener('click', () => {
+    if (!originalImg) return;
+    const link = document.createElement('a');
+    link.download = 'edited_image_512.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+});
+
+// 核心演算法：動態生成專屬圖片色系 Bar 並綁定到色彩滑桿背景
+function generateHueTrackGradient() {
+    if (!originalImg) return;
+    const sampleCanvas = document.createElement('canvas'), sampleCtx = sampleCanvas.getContext('2d');
+    sampleCanvas.width = 100; sampleCanvas.height = 50;
+    sampleCtx.drawImage(originalImg, 0, 0, 100, 50);
+    const sampleData = sampleCtx.getImageData(0, 0, 100, 50);
+
+    const trackCanvas = document.createElement('canvas'), trackCtx = trackCanvas.getContext('2d');
+    trackCanvas.width = 512; trackCanvas.height = 1;
+    const trackData = trackCtx.createImageData(512, 1);
+
+    const isOffsetMode = modeSwitch.checked;
+
+    for (let step = 0; step < 512; step++) {
+        const hueOffset = (step / 512) * 360;
+        let totalR = 0, totalG = 0, totalB = 0, count = 0;
+        for (let p = 0; p < sampleData.data.length; p += 40) {
+            let r = sampleData.data[p], g = sampleData.data[p+1], b = sampleData.data[p+2], a = sampleData.data[p+3];
+            if (a < 50) continue;
+            let [h, s, l] = rgbToHsl(r, g, b);
+            
+            if (isOffsetMode) {
+                h = (h + hueOffset) % 360;
+            } else {
+                if (s === 0) h = 0;
+                h = hueOffset;
+            }
+            
+            let [nr, ng, nb] = hslToRgb(h, s, l);
+            totalR += nr; totalG += ng; totalB += nb; count++;
+        }
+        if (count === 0) { totalR = 128; totalG = 128; totalB = 128; count = 1; }
+        const tIdx = step * 4;
+        trackData.data[tIdx] = totalR / count;
+        trackData.data[tIdx+1] = totalG / count;
+        trackData.data[tIdx+2] = totalB / count;
+        trackData.data[tIdx+3] = 255;
+    }
+    trackCtx.putImageData(trackData, 0, 0);
+    hueSlider.style.backgroundImage = `url(${trackCanvas.toDataURL()})`;
+    hueSlider.style.backgroundSize = "100% 100%";
+}
+
+// 動態更新彩度與亮度軌道（以及右上角預覽小方塊）
+function updateSliderGradients() {
+    const hVal = parseInt(hueSlider.value), sVal = parseInt(satSlider.value), lVal = parseInt(lightSlider.value), iVal = parseInt(invertSlider.value);
+    if (!originalImg) {
+        const hDeg = Math.round((hVal / 512) * 360), sPct = (sVal / 512) * 100, lPct = (lVal / 512) * 100;
+        previewBox.style.backgroundColor = `hsl(${hDeg}, ${sPct}%, ${lPct}%)`;
+        satSlider.style.background = `linear-gradient(to right, hsl(${hDeg}, 0%, 50%), hsl(${hDeg}, 100%, 50%))`;
+        lightSlider.style.background = `linear-gradient(to right, #000000, hsl(${hDeg}, ${sPct}%, 50%), #ffffff)`;
+        return;
+    }
+    const sampleCanvas = document.createElement('canvas'), sampleCtx = sampleCanvas.getContext('2d');
+    sampleCanvas.width = 10; sampleCanvas.height = 10;
+    sampleCtx.drawImage(originalImg, 0, 0, 10, 10);
+    const sampleData = sampleCtx.getImageData(0, 0, 10, 10);
+
+    const hueOffset = (hVal / 512) * 360;
+    const isOffsetMode = modeSwitch.checked;
+
+    let totalR = 0, totalG = 0, totalB = 0, count = 0;
+    for (let p = 0; p < sampleData.data.length; p += 4) {
+        let r = sampleData.data[p], g = sampleData.data[p+1], b = sampleData.data[p+2], a = sampleData.data[p+3];
+        if (a < 50) continue;
+        let [h, s, l] = rgbToHsl(r, g, b);
+        
+        if (isOffsetMode) {
+            h = (h + hueOffset) % 360;
+        } else {
+            if (s === 0) h = 0;
+            h = hueOffset;
+        }
+        
+        let [nr, ng, nb] = hslToRgb(h, s, l);
+        totalR += nr; totalG += ng; totalB += nb; count++;
+    }
+    if (count === 0) { totalR = 128; totalG = 128; totalB = 128; count = 1; }
+    const avgR = totalR / count, avgG = totalG / count, avgB = totalB / count;
+    const [matchHue] = rgbToHsl(avgR, avgG, avgB);
+    const sPct = (sVal / 512) * 100;
+
+    const invRatio = iVal / 512;
+    let finalR = avgR * (1 - invRatio) + (255 - avgR) * invRatio;
+    let finalG = avgG * (1 - invRatio) + (255 - avgG) * invRatio;
+    let finalB = avgB * (1 - invRatio) + (255 - avgB) * invRatio;
+    previewBox.style.backgroundColor = `rgb(${Math.round(finalR)}, ${Math.round(finalG)}, ${Math.round(finalB)})`;
+
+    satSlider.style.background = `linear-gradient(to right, hsl(${matchHue}, 0%, 50%), hsl(${matchHue}, 100%, 50%))`;
+    lightSlider.style.background = `linear-gradient(to right, #000000, hsl(${matchHue}, ${sPct}%, 50%), #ffffff)`;
+    invertSlider.style.background = `linear-gradient(to right, rgb(${Math.round(avgR)},${Math.round(avgG)},${Math.round(avgB)}), rgb(${Math.round(255-avgR)},${Math.round(255-avgG)},${Math.round(255-avgB)}))`;
+}
+
+// 核心主圖影像處理（整合黑白反轉演算法）
+function processImage() {
+    if (!originalImg) return;
+    ctx.drawImage(originalImg, 0, 0, canvas.width, canvas.height);
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height), data = imgData.data;
+
+    const hueOffset = (parseInt(hueSlider.value) / 512) * 360;  
+    const satControl = parseInt(satSlider.value) / 256; 
+    const targetLightOffset = (parseInt(lightSlider.value) - 256) / 256; 
+    const invertControl = parseInt(invertSlider.value) / 512;
+    const isOffsetMode = modeSwitch.checked;
+
+    for (let i = 0; i < data.length; i += 4) {
+        let r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
+        if (a === 0) continue; 
+        let [h, s, l] = rgbToHsl(r, g, b);
+        
+        if (isOffsetMode) {
+            h = (h + hueOffset) % 360; 
+        } else {
+            if (s === 0) h = 0;
+            h = hueOffset; 
+        }
+
+        if (parseInt(satSlider.value) <= 256) { s = s * satControl; } 
+        else { s = s + (1 - s) * ((parseInt(satSlider.value) - 256) / 256); }
+        s = Math.max(0, Math.min(1, s));
+
+        if (targetLightOffset > 0) { l = l + (1 - l) * targetLightOffset; } 
+        else { l = l + l * targetLightOffset; }
+        l = Math.max(0, Math.min(1, l));
+
+        let [newR, newG, newB] = hslToRgb(h, s, l);
+        data[i] = Math.round(newR * (1 - invertControl) + (255 - newR) * invertControl);
+        data[i+1] = Math.round(newG * (1 - invertControl) + (255 - newG) * invertControl);
+        data[i+2] = Math.round(newB * (1 - invertControl) + (255 - newB) * invertControl);
+    }
+    ctx.putImageData(imgData, 0, 0);
+}
+
+// 工具函式：RGB 轉 HSL
+function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    let max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; } else {
+        let d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+    }
+    return [h * 360, s, l];
+}
+
+// 工具函式：HSL 轉 RGB
+function hslToRgb(h, s, l) {
+    h /= 360; let r, g, b;
+    if (s === 0) { r = g = b = l; } else {
+        const hue2rgb = (p, q, t) => {
+            if (t < 0) t += 1; if (t > 1) t -= 1;
+            if (t < 1/6) return p + (q - p) * 6 * t;
+            if (t < 1/2) return q;
+            if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+        };
+        let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        let p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3); g = hue2rgb(p, q, h); b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+// 初始化頁面預設狀態
+updateSliderGradients();
+</script>
+
+</body>
+</html>

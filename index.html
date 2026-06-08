@@ -462,8 +462,7 @@ canvas { max-width: 100%; max-height: 400px; display: none; object-fit: contain;
 </div>
 
 <script>
-    <script>
-    // 設定你的動畫圖示路徑
+       // 設定你的動畫圖示路徑
     // 如果是單張 GIF，有些瀏覽器需要切換 href 才會動
     const faviconPath = "icon.gif"; 
 
@@ -484,9 +483,8 @@ canvas { max-width: 100%; max-height: 400px; display: none; object-fit: contain;
     // 每 500 毫秒（0.5秒）強制更新一次
     // 雖然這對 GIF 效能較耗損，但能解決部分瀏覽器不播放的問題
     setInterval(animateFavicon, 500);
-</script>
 
-const upload = document.getElementById('upload'), download = document.getElementById('download');
+    const upload = document.getElementById('upload'), download = document.getElementById('download');
 const canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d');
 const dropZone = document.getElementById('drop-zone'), dragTip = document.getElementById('drag-tip');
 const modeSwitch = document.getElementById('mode-switch'), modeText = document.getElementById('mode-text');

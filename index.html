@@ -462,6 +462,30 @@ canvas { max-width: 100%; max-height: 400px; display: none; object-fit: contain;
 </div>
 
 <script>
+    <script>
+    // 設定你的動畫圖示路徑
+    // 如果是單張 GIF，有些瀏覽器需要切換 href 才會動
+    const faviconPath = "icon.gif"; 
+
+    function animateFavicon() {
+        const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+        link.type = 'image/gif';
+        link.rel = 'shortcut icon';
+        
+        // 關鍵技巧：在路徑後加上隨機參數 (Query String)，強迫瀏覽器重新讀取
+        link.href = faviconPath + "?v=" + new Date().getTime();
+        
+        // 如果原本沒有這個標籤，就加進去
+        if (!document.querySelector("link[rel*='icon']")) {
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
+    }
+
+    // 每 500 毫秒（0.5秒）強制更新一次
+    // 雖然這對 GIF 效能較耗損，但能解決部分瀏覽器不播放的問題
+    setInterval(animateFavicon, 500);
+</script>
+
 const upload = document.getElementById('upload'), download = document.getElementById('download');
 const canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d');
 const dropZone = document.getElementById('drop-zone'), dragTip = document.getElementById('drag-tip');
